@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- To use consistance padding and font size -->
+<resources>
+    
+    <dimen name="main_screen_main_layout_padding">5dp</dimen>
+
+    <dimen name="default_button_size">22sp</dimen>
+
+</resources>
