@@ -1,5 +1,7 @@
 package com.example.a7minuteworkout
 
+import android.app.Dialog
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -8,11 +10,10 @@ import android.os.CountDownTimer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minuteworkout.databinding.ActivityExcersizeBinding
-import org.w3c.dom.Text
+import com.example.a7minuteworkout.databinding.CustomDialogConfirmationBinding
 import java.lang.Exception
-import java.net.URI
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -28,8 +29,8 @@ class ExcersizeActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
     private var exerciseProgress:Int = 0
 
-    private val REST_TIME:Int  = 10
-    private val EXERCISE_TIME:Int  = 30
+    private val REST_TIME:Long  = 1
+    private val EXERCISE_TIME:Long  = 1
 
 //    exercise list
     private var exerciseList:ArrayList<ExerciseModal>? = null
@@ -40,6 +41,9 @@ class ExcersizeActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
     // media player
     private var mediaPlayer:MediaPlayer? = null
+
+    // exercise adapter
+    private var exerciseAdapter : ExerciseStatusAdapter?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +64,49 @@ class ExcersizeActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         binding?.toolbarExercise?.setNavigationOnClickListener{
             // setting up back button
-            onBackPressed()
+            customDialogForBackButton()
         }
 
         setupRestView()
+        setUpExerciseStatusRecycleView()
+
+    }
+
+    override fun onBackPressed() {
+        customDialogForBackButton()
+    }
+
+    private fun customDialogForBackButton(){
+        val customDialog = Dialog(this)
+        // name of xml file for finding
+        val dialogBinding = CustomDialogConfirmationBinding.inflate(layoutInflater)
+        // setting up custom dialog
+        customDialog.setContentView(dialogBinding.root)
+        customDialog.setCanceledOnTouchOutside(false)
 
 
 
+        dialogBinding.btnYes.setOnClickListener {
+                    this.finish()
+                    customDialog.dismiss()
+        }
+
+        dialogBinding.btnNo.setOnClickListener {
+            customDialog.dismiss()
+
+        }
+
+        customDialog.show()
+
+    }
+
+    private fun setUpExerciseStatusRecycleView(){
+        // displaying items HORIZONTAL
+        binding?.rvExerciseStatus?.layoutManager =
+            LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+
+        exerciseAdapter = ExerciseStatusAdapter(exerciseList!!)
+        binding?.rvExerciseStatus?.adapter = exerciseAdapter
     }
 
     override fun onInit(status: Int) {
@@ -93,18 +133,24 @@ class ExcersizeActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     private fun setProgressBarExercise(){
         binding?.progressBarExercise?.progress = exerciseProgress
 
-        exerciseTimer = object:CountDownTimer(30000,1000){
+        exerciseTimer = object:CountDownTimer(EXERCISE_TIME * 1000,1000){
             override fun onTick(p0: Long) {
                 exerciseProgress++
-                binding?.progressBarExercise?.progress = EXERCISE_TIME - exerciseProgress
-                binding?.textViewTimerExercise?.text = (EXERCISE_TIME - exerciseProgress).toString()
+                binding?.progressBarExercise?.progress = 30 - exerciseProgress
+                binding?.textViewTimerExercise?.text = (30 - exerciseProgress).toString()
             }
 
             override fun onFinish() {
                 if(currentExercisePosition < exerciseList?.size!! - 1){
+                    exerciseList!![currentExercisePosition].setIsSelected(false)
+                    exerciseList!![currentExercisePosition].setIsCompleted(true)
+                    // update the recycle adapter data
+                    exerciseAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 }else{
-                    Toast.makeText(this@ExcersizeActivity,"Congratulations!",Toast.LENGTH_SHORT).show()
+                    finish()
+                    startActivity(Intent(this@ExcersizeActivity,
+                        FinishActivity::class.java))
                 }
             }
 
@@ -140,15 +186,19 @@ class ExcersizeActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     private fun setRestProgressBar(){
         binding?.progressBar?.progress = restProgress
 
-        restTimer = object:CountDownTimer(10000,1000){
+        restTimer = object:CountDownTimer(REST_TIME * 1000,1000){
             override fun onTick(p0: Long) {
                 restProgress++
-                binding?.progressBar?.progress = REST_TIME - restProgress
-                binding?.textViewTimer?.text = (REST_TIME - restProgress).toString()
+                binding?.progressBar?.progress = 10 - restProgress
+                binding?.textViewTimer?.text = (10 - restProgress).toString()
             }
 
             override fun onFinish() {
-                currentExercisePosition++;
+                currentExercisePosition++
+
+                exerciseList!![currentExercisePosition].setIsSelected(true)
+                // update the recycle adapter data
+                exerciseAdapter!!.notifyDataSetChanged()
                 setupExerciseView()
 
             }

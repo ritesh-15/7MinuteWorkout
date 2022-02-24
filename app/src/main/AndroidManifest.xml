@@ -3,13 +3,9 @@
     package="com.example.a7minuteworkout">
 
     <queries>
-
         <intent>
-
-            <action android:name="android.intent.action.TTS_SERVICE"></action>
-
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
-
     </queries>
 
     <application
@@ -19,6 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.7MinuteWorkout">
+        <activity
+            android:name=".BmiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FinishActivity"
+            android:exported="false" />
         <activity
             android:name=".ExcersizeActivity"
             android:exported="false" />

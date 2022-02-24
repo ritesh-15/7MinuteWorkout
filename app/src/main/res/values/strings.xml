@@ -2,4 +2,13 @@
     <string name="app_name">7MinuteWorkout</string>
     <string name="image">start image</string>
     <string name="get_ready_for">Get Ready For</string>
+    <string name="end">END</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="you_have_done_this_workout">You have done this workout!</string>
+    <string name="finish">Finish</string>
+    <string name="dialog_message">This will stop your workout. You come this so far are you sure you want to quit?</string>
+    <string name="dialog_title">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="calculate_btn">Calculate</string>
 </resources>

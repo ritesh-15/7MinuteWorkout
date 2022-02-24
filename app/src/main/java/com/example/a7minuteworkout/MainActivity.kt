@@ -19,9 +19,6 @@ class MainActivity : AppCompatActivity() {
     private var binding:ActivityMainBinding? = null
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // preapre the binding
@@ -35,6 +32,10 @@ class MainActivity : AppCompatActivity() {
         // using id with binding
         binding?.flStart?.setOnClickListener{
             startActivity(Intent(this,ExcersizeActivity::class.java))
+        }
+
+        binding?.flBMI?.setOnClickListener {
+            startActivity(Intent(this,BmiActivity::class.java))
         }
 
     }
